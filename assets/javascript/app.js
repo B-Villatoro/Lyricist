@@ -1,13 +1,11 @@
 // initial testing
-let apikey = "&apikey=2ff458e3e36ac3751209b898369ec5bd";
 var favplaylist = [];
 
 $("#add-music").on("click", function (event) {
     event.preventDefault();
 
     let lyricInput = $("#music-show").val().trim();
-    let clueInput = "";
-    let baseUrl = "https://cors-anywhere.herokuapp.com/http://api.musixmatch.com/ws/1.1/track.search?format=json&q_lyrics=" + lyricInput + "&q_track_artist=" + clueInput + "&callback=jsonp&quorum_factor=.06&f_has_lyrics=1&s_track_rating=desc&apikey=2ff458e3e36ac3751209b898369ec5bd"
+    let baseUrl = "https://cors-anywhere.herokuapp.com/http://api.musixmatch.com/ws/1.1/track.search?format=json&q_lyrics=" + lyricInput +"&quorum_factor=.06&f_has_lyrics=1&s_track_rating=desc&apikey=2ff458e3e36ac3751209b898369ec5bd"
     $("#art-show").val("")
     $("#searchDump").empty();
 
@@ -24,7 +22,6 @@ $("#add-music").on("click", function (event) {
                 $("<p>").addClass("track").text(obj.track_list[i].track.track_name),
                     $("<p>").addClass("artist").text("Artist: " + obj.track_list[i].track.artist_name),
                      $("<button>").addClass("favorite").text( "💜").on("click", function () {
-                    var lastplayed = $ ("<div>")
                         favplaylist.push( "<p>"+ "TRACK: " + obj.track_list[i].track.track_name + "<br>" + " ARTIST: "+ obj.track_list[i].track.artist_name)
                         console.log( "favplaylist" + obj.track_list[i].track.track_name    )
                         $("#lastplayed").html("Liked Tracks" + ("<p>" + favplaylist))
@@ -57,10 +54,8 @@ function firstCall(title, artist, album) {
     if (artist == null) {
         console.log("no artist and album");
 
-        $.ajax({
-            url: "https://api.napster.com/v2.2/search?apikey=OWI1YTkyYTctMDRjNC00YjgzLWE2ODItYTZkMzFmNzFmMGQy&query=" + title,
-            method: "GET",
-        }).done(function (response) {
+        $.get("https://api.napster.com/v2.2/search?apikey=NTEwNTk3OGUtNDQwYy00MzBiLTgyNzEtNDU0MjY0YTVjZmMy&query=" + title+"&type=track",
+          ).then(function (response) {
             console.log(response);
             let id = response.search.order[0];
             secondCall(id);
@@ -68,10 +63,8 @@ function firstCall(title, artist, album) {
     } else if (album == null) {
         console.log("no album ");
 
-        $.ajax({
-            url: "https://api.napster.com/v2.2/search?apikey=OWI1YTkyYTctMDRjNC00YjgzLWE2ODItYTZkMzFmNzFmMGQy&query=" + title + "+" + artist,
-            method: "GET",
-        }).done(function (response) {
+        $.get("https://api.napster.com/v2.2/search?apikey=NTEwNTk3OGUtNDQwYy00MzBiLTgyNzEtNDU0MjY0YTVjZmMy&query=" + title + "+" + artist+"&type=track",
+           ).then(function (response) {
             console.log(response);
             let id = response.search.order[0];
             secondCall(id);
@@ -79,10 +72,8 @@ function firstCall(title, artist, album) {
     } else {
         console.log("no album ");
 
-        $.ajax({
-            url: "https://api.napster.com/v2.2/search?apikey=OWI1YTkyYTctMDRjNC00YjgzLWE2ODItYTZkMzFmNzFmMGQy&query=" + title + "+" + artist + "+" + album,
-            method: "GET",
-        }).done(function (response) {
+        $.get("https://api.napster.com/v2.2/search?apikey=NTEwNTk3OGUtNDQwYy00MzBiLTgyNzEtNDU0MjY0YTVjZmMy&query=" + title + "+" + artist + "+" + album+"&type=track",
+        ).then(function (response) {
             console.log(response);
             let id = response.search.order[0];
             secondCall(id);
@@ -92,8 +83,9 @@ function firstCall(title, artist, album) {
 
 
 function secondCall(track) {
+    console.log(track);
     $.ajax({
-        url: "https://api.napster.com/v2.2/tracks/" + track + "?apikey=OWI1YTkyYTctMDRjNC00YjgzLWE2ODItYTZkMzFmNzFmMGQy",
+        url: "https://api.napster.com/v2.2/tracks/"+track+"?apikey=NTEwNTk3OGUtNDQwYy00MzBiLTgyNzEtNDU0MjY0YTVjZmMy",
         method: "GET"
     }).then(function (response) {
         $tracks.html(tracksTemplate(response));
@@ -118,3 +110,4 @@ $(document).on("click", ".output", function () {
     firstCall(track, artist);
     showLyrics(trackId);
 }) 
+
